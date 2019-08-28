@@ -5,18 +5,20 @@ RSpec.describe RestaurantsController, :type => :controller do
     @restaurants = FactoryBot.create_list(:restaurant, 3)
   end
 
-  describe 'GET restaurants' do
+  describe '#index' do
     it 'returns array with restaurants' do
       get :index
 
+      formatted_response = JSON.parse(response.body)
       expect(response.status).to eq(200)
-      expect(response.body).not_to be_empty
+      expect(formatted_response).to be_an_instance_of(Array)
+      expect(formatted_response.length).to be >(2)
     end
   end
 
-  describe 'GET reviews#1' do
+  describe '#show' do
     it 'returns specific restaurant by id' do
-      get :show, :params => { id: @restaurants[0].id }
+      get :show, params: { id: @restaurants[0].id }
 
       expect(response.status).to eq(200)
       expect(response.body).not_to be_empty
@@ -29,49 +31,47 @@ RSpec.describe RestaurantsController, :type => :controller do
     end
   end
 
-  describe 'POST review' do
+  describe '#create' do
     it 'creates new restaurant' do
-      post :create, :params => { name: 'New Rest', cuisine: 'Italian', ten_bis: true, address: 'Some Address', max_delivery_time: 30, rating: 0 }
+      new_name = Faker::Name.name
+      post :create, :params => { restaurant: { name: new_name, cuisine: 'Italian', ten_bis: true, address: Faker::Address.full_address, max_delivery_time: Faker::Number.between(from: 1, to: 120), rating: Faker::Number.between(from: 1, to: 3) }}
 
       expect(response.status).to eq(201)
       expect(response.body).not_to be_empty
 
       formatted_response = JSON.parse(response.body)
 
-      get :show, :params => { id: formatted_response["id"] }
-      expect(response.status).to eq(200)
-      expect(response.body).not_to be_empty
+      expect(Restaurant.find_by(id: formatted_response['id'])).to be_present
     end
   end
 
-  describe 'PATCH review' do
+  describe '#update' do
     describe 'restaurant exists' do
       it 'updates name field' do
-        post :update, :params => { id: @restaurants[0].id, name: 'New Name' }
+        new_name = Faker::Name.name
+        post :update, :params => { id: @restaurants[0].id, restaurant: { name: new_name }}
 
         expect(response.status).to eq(200)
         expect(response.body).not_to be_empty
 
-        get :show, :params => { id: @restaurants[0].id }
-        formatted_response = JSON.parse(response.body);
-        expect(formatted_response["name"]).to eq('New Name')
+        expect(Restaurant.find_by(id: @restaurants[0].id).name).to eq(new_name)
       end
     end
 
     describe 'restaurant does not exist' do
       it 'returns 404' do
-        expect{ post :update, :params => { id: :not_exist, name: 'new_name' } }.to raise_error(ActiveRecord::RecordNotFound)
+        expect{ post :update, :params => { id: :not_exist, name: Faker::Name.name } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
 
-  describe 'DELETE review' do
+  describe '#destroy' do
     describe 'restaurant exists' do
-      it 'updates name field' do
+      it 'deletes the restaurant' do
         post :destroy, :params => { id: @restaurants[0].id}
 
         expect(response.status).to eq(204)
-        expect(response.body).to be_empty
+        expect(Restaurant.find_by(id:  @restaurants[0].id)).not_to be_present
       end
     end
 

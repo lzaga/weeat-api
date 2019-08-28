@@ -2,9 +2,7 @@ class RestaurantsController < ApplicationController
   before_action :set_restaurant, only: [:show, :update, :destroy]
 
   def index
-    @restaurants = Restaurant.all
-
-    render json: @restaurants
+    render json: Restaurant.all
   end
 
   def show
@@ -12,12 +10,12 @@ class RestaurantsController < ApplicationController
   end
 
   def create
-    @restaurant = Restaurant.new(restaurant_params)
-
-    if @restaurant.save
+    begin
+      @restaurant = Restaurant.create! restaurant_params
       render json: @restaurant, status: :created, location: @restaurant
-    else
-      render json: @restaurant.errors, status: :unprocessable_entity
+    rescue => e
+      Rails.logger.error e
+      render json: 'Ops, the restaurant did not saved', status: :bad_request
     end
   end
 
@@ -25,7 +23,8 @@ class RestaurantsController < ApplicationController
     if @restaurant.update(restaurant_params)
       render json: @restaurant
     else
-      render json: @restaurant.errors, status: :unprocessable_entity
+      Rails.logger.error @restaurant.errors
+      render json: 'Ops, the restaurant did not updated', status: :unprocessable_entity
     end
   end
 
@@ -39,6 +38,6 @@ class RestaurantsController < ApplicationController
     end
 
     def restaurant_params
-      params.permit(:name, :cuisine, :rating, :ten_bis, :address, :max_delivery_time)
+      params.require(:restaurant).permit(:name, :cuisine, :rating, :ten_bis, :address, :max_delivery_time)
     end
 end
