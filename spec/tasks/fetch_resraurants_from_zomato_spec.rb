@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'rake'
 
-describe 'fetch_restaurants_from_zomato' do
+describe 'fetch_restaurants_from_zomato', :vcr  do
   before(:all) do
     Rake.application.rake_require("../../lib/tasks/fetch_restaurants_from_zomato")
     Rake::Task.define_task(:environment)
