@@ -2,7 +2,16 @@ class RestaurantsController < ApplicationController
   before_action :set_restaurant, only: [:show, :update, :destroy]
 
   def index
-    render json: Restaurant.all
+    params = ActionController::Parameters.new(request.query_parameters)
+    permitted_params = params.permit(:rating, :cuisine, :max_delivery_time)
+
+    if permitted_params.permitted?
+      @restaurants = Restaurant.where(converted_params(permitted_params))
+    else
+      @restaurants = Restaurant.all
+    end
+
+    render json: @restaurants
   end
 
   def show
@@ -40,4 +49,14 @@ class RestaurantsController < ApplicationController
     def restaurant_params
       params.require(:restaurant).permit(:name, :cuisine, :rating, :ten_bis, :address, :max_delivery_time)
     end
+
+  def converted_params(query_params)
+    query_params[:rating] = ((query_params[:rating].to_i)..Restaurant::MAX_RATING) if query_params[:rating].present?
+
+    query_params[:cuisine] = (query_params[:cuisine]) if query_params[:cuisine].present?
+
+    query_params[:max_delivery_time] = (0..(query_params[:max_delivery_time].to_i)) if query_params[:max_delivery_time].present?
+
+    query_params
+  end
 end
