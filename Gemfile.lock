@@ -61,8 +61,13 @@ GEM
     builder (3.2.3)
     byebug (11.0.1)
     concurrent-ruby (1.1.5)
+    connection_pool (2.2.2)
     crass (1.0.4)
     diff-lcs (1.3)
+    dotenv (2.7.5)
+    dotenv-rails (2.7.5)
+      dotenv (= 2.7.5)
+      railties (>= 3.2, < 6.1)
     erubi (1.8.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
@@ -71,6 +76,8 @@ GEM
       railties (>= 4.2.0)
     faker (2.1.2)
       i18n (>= 0.8)
+    faraday (0.15.4)
+      multipart-post (>= 1.2, < 3)
     ffi (1.11.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -93,6 +100,7 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     msgpack (1.3.1)
+    multipart-post (2.1.1)
     nio4r (2.4.0)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
@@ -100,6 +108,8 @@ GEM
     puma (3.12.1)
     rack (2.0.7)
     rack-cors (1.0.3)
+    rack-protection (2.0.7)
+      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.0.0)
@@ -136,6 +146,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    redis (4.1.2)
     rspec-core (3.8.2)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.4)
@@ -156,6 +167,11 @@ GEM
     ruby_dep (1.5.0)
     shoulda-matchers (4.1.2)
       activesupport (>= 4.2.0)
+    sidekiq (6.0.0)
+      connection_pool (>= 2.2.2)
+      rack (>= 2.0.0)
+      rack-protection (>= 2.0.0)
+      redis (>= 4.1.0)
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -171,6 +187,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    vcr (5.0.0)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -182,8 +199,10 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
+  dotenv-rails
   factory_bot_rails
   faker
+  faraday
   listen (>= 3.0.5, < 3.2)
   pg
   puma (~> 3.11)
@@ -192,9 +211,11 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails (~> 3.8)
   shoulda-matchers
+  sidekiq
   spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
+  vcr
 
 RUBY VERSION
    ruby 2.5.1p57

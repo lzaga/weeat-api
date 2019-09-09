@@ -1,7 +1,9 @@
+require_relative '../../app/helpers/cuisines'
+
 FactoryBot.define do
   factory :restaurant do
     name              { Faker::Name.name }
-    cuisine           { %w(Breakfast Asian Salads Sushi Cafe Hamburger Hummus Vegetarian Mexican Indian Bistro Italian).sample }
+    cuisine           { Cuisines.all_cuisines.sample }
     rating            { 0 }
     ten_bis           { true }
     address           { Faker::Address.full_address }
