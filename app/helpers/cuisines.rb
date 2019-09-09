@@ -1,5 +1,5 @@
 module Cuisines
-  def Cuisines.all_cuisines
+  def self.all_cuisines
     %W( Afghan
         Afghani
         African

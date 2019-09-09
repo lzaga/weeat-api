@@ -59,7 +59,7 @@ def save_reviews_on_restaurant(restaurant, reviews)
       begin
         params = {
             restaurant_id: restaurant.id,
-            reviewer: review["user"]["mame"],
+            reviewer: review["user"]["name"],
             rating: review["rating"],
             review: review["review_text"]
         }

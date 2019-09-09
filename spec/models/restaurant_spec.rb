@@ -3,11 +3,11 @@ require_relative '../../app/helpers/cuisines'
 
 RSpec.describe Restaurant, type: :model do
   include Cuisines
-  context 'associations' do
+  describe 'associations' do
     it { should have_many(:reviews).dependent(:destroy) }
   end
 
-  context 'validations' do
+  describe 'validations' do
     it do
       should validate_inclusion_of(:cuisine).in_array(Cuisines.all_cuisines)
     end

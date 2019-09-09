@@ -1,7 +1,7 @@
 desc 'fetch cuisines from Zomato'
 
 task :fetch_cuisines_from_zomato => :environment do
-  GET_RESTAURANTS_URL = ENV['ZOMATO_URL'] + '/cuisines'
+  GET_RESTAURANTS_URL = ENV['ZOMATO_URL'] + '/cuisines'.freeze
 
   cuisines = fetch_cuisines
 

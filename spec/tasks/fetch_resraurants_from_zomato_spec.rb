@@ -12,21 +12,23 @@ describe 'fetch_restaurants_from_zomato' do
     Restaurant.delete_all
   end
 
-  describe "test rake task" do
+  context "test rake task" do
     let :run_rake_task do
       Rake::Task["fetch_restaurants_from_zomato"].reenable
       Rake.application.invoke_task "fetch_restaurants_from_zomato"
     end
 
-    it "should save new restaurants" do
-      expect { run_rake_task }.to change { Restaurant.count }
+    describe 'restaurant with correct params' do
+      it "should save new restaurants" do
+        expect { run_rake_task }.to change { Restaurant.count }
+      end
+
+      it "should save new reviews" do
+        expect { run_rake_task }.to change { Review.count }
+      end
     end
 
-    it "should save new reviews" do
-      expect { run_rake_task }.to change { Review.count }
-    end
-
-    context 'errors' do
+    describe 'restaurant without correct params' do
       it "raises error if restaurant did not save" do
         allow(Restaurant).to receive(:find_or_create_by).and_raise(ActiveRecord::ActiveRecordError)
 
