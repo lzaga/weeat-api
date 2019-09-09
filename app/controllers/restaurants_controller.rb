@@ -2,10 +2,11 @@ class RestaurantsController < ApplicationController
   before_action :set_restaurant, only: [:show, :update, :destroy]
 
   def index
-    if request.query_parameters.present?
-      params = create_where_params_obj(request.query_parameters)
+    params = ActionController::Parameters.new(request.query_parameters)
+    permitted_params = params.permit(:rating, :cuisine, :max_delivery_time)
 
-      @restaurants = Restaurant.where(params)
+    if permitted_params.permitted?
+      @restaurants = Restaurant.where(converted_params(permitted_params))
     else
       @restaurants = Restaurant.all
     end
@@ -49,21 +50,13 @@ class RestaurantsController < ApplicationController
       params.require(:restaurant).permit(:name, :cuisine, :rating, :ten_bis, :address, :max_delivery_time)
     end
 
-  def create_where_params_obj(query_params)
-    params = {}
+  def converted_params(query_params)
+    query_params[:rating] = ((query_params[:rating].to_i)..Restaurant::MAX_RATING) if query_params[:rating].present?
 
-    if query_params['rating'].present?
-      params['rating'] = (query_params['rating'].to_i)..Restaurant::MAX_RATING
-    end
+    query_params[:cuisine] = (query_params[:cuisine]) if query_params[:cuisine].present?
 
-    if query_params['cuisine'].present?
-      params['cuisine'] = query_params['cuisine']
-    end
+    query_params[:max_delivery_time] = (0..(query_params[:max_delivery_time].to_i)) if query_params[:max_delivery_time].present?
 
-    if query_params['max_delivery_time'].present?
-      params['max_delivery_time'] = 0..(query_params['max_delivery_time'].to_i)
-    end
-
-    params
+    query_params
   end
 end
